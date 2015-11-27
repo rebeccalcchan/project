@@ -177,6 +177,117 @@ app.get('/grades/:attrib/:attrib_value', function(req,res) {
     });
 });
 
+// to update any
+app.put('/:id/:attrib/:attrib_value',function(req,res) {
+	var restaurantSchema = require('./models/restaurant');
+	mongoose.connect('mongodb://localhost/test');
+	var criteria = {};
+	var db = mongoose.connection;
+	db.on('error', console.error.bind(console, 'connection error:'));
+	db.once('open', function (callback) {
+		var Restaurant = mongoose.model('Restaurant', restaurantSchema);
+
+		criteria[req.params.attrib] = req.params.attrib_value;   //.replace("+", " ");
+		//Restaurant.find({restaurant_id: req.params.id}).update({$set:criteria}, function(err) {
+		Restaurant.update( {restaurant_id: req.params.id},criteria , function(err,results) {
+       		if (err) {
+				res.status(500).json(err);
+				throw err
+			}
+       			console.log('Restaurant UPdates!');
+       			res.status(200).json({message: 'update done', id: req.params.id});
+			//res.status(200).json({message: 'Update done', id: req.params.id});
+			db.close();
+    	});
+    });
+}); 
+
+
+// to update any testing
+app.put('/:searchkey/:searchkey_value/:attrib/:attrib_value',function(req,res) {
+	var restaurantSchema = require('./models/restaurant');
+	mongoose.connect('mongodb://localhost/test');
+	var criteria = {};
+	var searchcri={};
+	var db = mongoose.connection;
+	db.on('error', console.error.bind(console, 'connection error:'));
+	db.once('open', function (callback) {
+		var Restaurant = mongoose.model('Restaurant', restaurantSchema);
+
+		criteria[req.params.attrib] = req.params.attrib_value;   //.replace("+", " ");
+		searchcri[req.params.searchkey] = req.params.searchkey_value;
+		//Restaurant.find({restaurant_id: req.params.id}).update({$set:criteria}, function(err) {
+		Restaurant.update( searchcri,criteria , function(err,results) {
+       		if (err) {
+				res.status(500).json(err);
+				throw err
+			}
+       			console.log('Restaurant UPdates!');
+       			res.status(200).json({message: 'update done', id: req.params.id});
+			//res.status(200).json({message: 'Update done', id: req.params.id});
+			db.close();
+    	});
+    });
+}); 
+
+
+// to update address
+app.put('/address/:searchkey/:searchkey_value/:attrib/:attrib_value',function(req,res) {
+	var restaurantSchema = require('./models/restaurant');
+	mongoose.connect('mongodb://localhost/test');
+	var criteria = {};
+	var searchcri={};
+	var db = mongoose.connection;
+	db.on('error', console.error.bind(console, 'connection error:'));
+	db.once('open', function (callback) {
+		var Restaurant = mongoose.model('Restaurant', restaurantSchema);
+		searchcri[req.params.searchkey] = req.params.searchkey_value;
+		criteria["address."+req.params.attrib] = req.params.attrib_value;   //.replace("+", " ");
+		//Restaurant.find({restaurant_id: req.params.id}).update({$set:criteria}, function(err) {
+		Restaurant.update( searchcri,criteria , function(err,results) {
+       		if (err) {
+				res.status(500).json(err);
+				throw err
+			}
+       			console.log('Restaurant UPdates!');
+       			res.status(200).json({message: 'update done', id: req.params.id});
+			//res.status(200).json({message: 'Update done', id: req.params.id});
+			db.close();
+    	});
+    });
+}); 
+
+// to update grade
+app.put('/grade/:id/:id_value/:attrib/:attrib_value',function(req,res) {
+	var restaurantSchema = require('./models/restaurant');
+	mongoose.connect('mongodb://localhost/test');
+	var criteria = {};
+	var find = {};
+	var querystring={};
+	var db = mongoose.connection;
+	db.on('error', console.error.bind(console, 'connection error:'));
+	db.once('open', function (callback) {
+		var Restaurant = mongoose.model('Restaurant', restaurantSchema);
+		
+		//querystring= {$set:{grades.req.params.attrib:req.params.attrib_value}};   //.replace("+", " ");
+		criteria["grades."+req.params.attrib] = req.params.attrib_value;
+		find[req.params.id] = req.params.id_value; 
+		querystring="{$set:"+criteria+"}";
+		//Restaurant.find({restaurant_id: req.params.id}).update({$set:criteria}, function(err) {
+		Restaurant.update(find,{$set:criteria}, function(err,results) {
+			if (err) {
+				res.status(500).json(err);
+				throw err
+			}
+		console.log('Restaurant UPdates!');
+		res.status(200).json({message: 'update done', id: req.params.id});
+		//res.status(200).json({message: 'Update done', id: req.params.id});
+		db.close();
+		});
+	});
+});
+
+
 app.get('/', function(req,res) {
 	console.log("Hello");
 });
