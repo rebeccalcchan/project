@@ -27,6 +27,16 @@ app.post('/',function(req,res) {
 		rObj.cuisine = req.body.cuisine;
 		rObj.name = req.body.name;
 		rObj.restaurant_id = req.body.restaurant_id;
+		rObj.grades = [];
+		//var record = {};
+		//record.date=req.body.date;
+		//record.grade=req.body.grade;
+		//record.score=req.body.score;
+		if(req.body.date != null||req.body.grade!=null||req.body.score!=null)
+		{
+			var jsonstring = {"date":req.body.date,"grade":req.body.grade,"score":req.body.score};
+			rObj.grades.push(jsonstring);
+		}
 
 		var Restaurant = mongoose.model('Restaurant', restaurantSchema);
 		var r = new Restaurant(rObj);
@@ -85,7 +95,7 @@ app.get('/restaurant_id/:id', function(req,res) {
     });
 });
 
-//new test get method
+//new test get method for get any attribute
 app.get('/:attrib/:attrib_value', function(req,res) {
 	var restaurantSchema = require('./models/restaurant');
 	mongoose.connect('mongodb://localhost/test');
@@ -113,7 +123,7 @@ app.get('/:attrib/:attrib_value', function(req,res) {
     });
 });
 
-//new test get method 2
+//new test get method 2 for get variable of address
 app.get('/address/:attrib/:attrib_value', function(req,res) {
 	var restaurantSchema = require('./models/restaurant');
 	mongoose.connect('mongodb://localhost/test');
@@ -124,6 +134,33 @@ app.get('/address/:attrib/:attrib_value', function(req,res) {
 		var Restaurant = mongoose.model('Restaurant', restaurantSchema);
 		
 		criteria["address."+req.params.attrib] = req.params.attrib_value.replace("+", " ");
+		Restaurant.find(criteria,function(err,results){
+       		if (err) {
+				res.status(500).json(err);
+				throw err
+			}
+			if (results.length > 0) {
+				res.status(200).json(results);
+			}
+			else {
+				res.status(200).json({message: 'No matching document'});
+			}
+			db.close();
+    	});
+    });
+});
+
+//new test get method 3 for get grade records
+app.get('/grades/:attrib/:attrib_value', function(req,res) {
+	var restaurantSchema = require('./models/restaurant');
+	mongoose.connect('mongodb://localhost/test');
+	var db = mongoose.connection;
+	var criteria = {};
+	db.on('error', console.error.bind(console, 'connection error:'));
+	db.once('open', function (callback) {
+		var Restaurant = mongoose.model('Restaurant', restaurantSchema);
+		
+		criteria["grades."+req.params.attrib] = req.params.attrib_value.replace("+", " ");
 		Restaurant.find(criteria,function(err,results){
        		if (err) {
 				res.status(500).json(err);
