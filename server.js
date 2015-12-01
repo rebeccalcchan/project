@@ -53,23 +53,26 @@ app.post('/',function(req,res) {
     });
 });
 
-app.delete('/restaurant_id/:id',function(req,res) {
+app.delete('/:attrib/:attrib_value',function(req,res) {
 	var restaurantSchema = require('./models/restaurant');
 	mongoose.connect('mongodb://localhost/test');
 	var db = mongoose.connection;
+	var criteria = {};
 	db.on('error', console.error.bind(console, 'connection error:'));
 	db.once('open', function (callback) {
 		var Restaurant = mongoose.model('Restaurant', restaurantSchema);
-		Restaurant.find({restaurant_id: req.params.id}).remove(function(err) {
-       		if (err) {
+
+		criteria[req.params.attrib] = req.params.attrib_value;
+		Restaurant.find(criteria).remove(function(err) {
+			if (err) {
 				res.status(500).json(err);
 				throw err
-			}
-       		//console.log('Restaurant removed!')
-       		db.close();
-			res.status(200).json({message: 'delete done', id: req.params.id});
-    	});
-    });
+   			}
+         		//console.log('Restaurant removed!')
+        		db.close();
+   			res.status(200).json({message: 'delete done', id: req.params.id});
+		});
+	});
 });
 
 app.get('/restaurant_id/:id', function(req,res) {
@@ -258,23 +261,30 @@ app.put('/address/:searchkey/:searchkey_value/:attrib/:attrib_value',function(re
 }); 
 
 // to update grade
-app.put('/grade/:id/:id_value/:attrib/:attrib_value',function(req,res) {
+app.put('/grades/:id/:target/:target_value/:attrib/:attrib_value',function(req,res) {
 	var restaurantSchema = require('./models/restaurant');
 	mongoose.connect('mongodb://localhost/test');
 	var criteria = {};
 	var find = {};
-	var querystring={};
+	var querystring1={};
+	var queryString2 = {};
+	var target = {};
 	var db = mongoose.connection;
 	db.on('error', console.error.bind(console, 'connection error:'));
 	db.once('open', function (callback) {
 		var Restaurant = mongoose.model('Restaurant', restaurantSchema);
 		
-		//querystring= {$set:{grades.req.params.attrib:req.params.attrib_value}};   //.replace("+", " ");
-		criteria["grades."+req.params.attrib] = req.params.attrib_value;
-		find[req.params.id] = req.params.id_value; 
-		querystring="{$set:"+criteria+"}";
-		//Restaurant.find({restaurant_id: req.params.id}).update({$set:criteria}, function(err) {
-		Restaurant.update(find,{$set:criteria}, function(err,results) {
+		
+		criteria["grades.$."+req.params.attrib] = req.params.attrib_value;
+		//console.log("criteria:"+JSON.stringify(criteria));
+		//find[restaurant_id] = req.params.id; 
+		target[req.params.target] = req.params.target_value;
+		//console.log("find:"+JSON.stringify(find));
+		queryString1 = {"restaurant_id":req.params.id,"grades":{$elemMatch:target}};
+		queryString2 = {$set:criteria};
+
+		console.log("find:"+JSON.stringify(queryString1)+JSON.stringify(queryString2));
+		Restaurant.update(queryString1,queryString2, function(err,results) {
 			if (err) {
 				res.status(500).json(err);
 				throw err
