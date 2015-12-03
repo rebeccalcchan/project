@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 var mongodbURL = 'mongodb://rebeccalcchan.cloudapp.net:27017/test';
 var mongoose = require('mongoose');
 
-app.post('/',function(req,res) {
+app.post('/testing',function(req,res) {
 	//console.log(req.body);
 	var restaurantSchema = require('./models/restaurant');
 	mongoose.connect(mongodbURL);
