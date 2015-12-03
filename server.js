@@ -299,7 +299,7 @@ app.put('/grades/:id/:target/:target_value/:attrib/:attrib_value',function(req,r
 
 
 app.get('/', function(req,res) {
-	console.log("Hello");
+	console.log("hello testing");
 });
 
 app.listen(process.env.PORT || 8099);
