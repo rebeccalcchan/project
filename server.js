@@ -5,13 +5,13 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-var mongodbURL = 'mongodb://localhost:27017/test';
+var mongodbURL = 'mongodb://rebeccalcchan.cloudapp.net:27017/test';
 var mongoose = require('mongoose');
 
 app.post('/',function(req,res) {
 	//console.log(req.body);
 	var restaurantSchema = require('./models/restaurant');
-	mongoose.connect('mongodb://localhost/test');
+	mongoose.connect(mongodbURL);
 	var db = mongoose.connection;
 	db.on('error', console.error.bind(console, 'connection error:'));
 	db.once('open', function (callback) {
@@ -55,7 +55,7 @@ app.post('/',function(req,res) {
 
 app.delete('/:attrib/:attrib_value',function(req,res) {
 	var restaurantSchema = require('./models/restaurant');
-	mongoose.connect('mongodb://localhost/test');
+	mongoose.connect(mongodbURL);
 	var db = mongoose.connection;
 	var criteria = {};
 	db.on('error', console.error.bind(console, 'connection error:'));
@@ -77,7 +77,7 @@ app.delete('/:attrib/:attrib_value',function(req,res) {
 
 app.get('/restaurant_id/:id', function(req,res) {
 	var restaurantSchema = require('./models/restaurant');
-	mongoose.connect('mongodb://localhost/test');
+	mongoose.connect(mongodbURL);
 	var db = mongoose.connection;
 	db.on('error', console.error.bind(console, 'connection error:'));
 	db.once('open', function (callback) {
@@ -101,7 +101,7 @@ app.get('/restaurant_id/:id', function(req,res) {
 //new test get method for get any attribute
 app.get('/:attrib/:attrib_value', function(req,res) {
 	var restaurantSchema = require('./models/restaurant');
-	mongoose.connect('mongodb://localhost/test');
+	mongoose.connect(mongodbURL);
 	var db = mongoose.connection;
 	var criteria = {};
 	db.on('error', console.error.bind(console, 'connection error:'));
@@ -129,7 +129,7 @@ app.get('/:attrib/:attrib_value', function(req,res) {
 //new test get method 2 for get variable of address
 app.get('/address/:attrib/:attrib_value', function(req,res) {
 	var restaurantSchema = require('./models/restaurant');
-	mongoose.connect('mongodb://localhost/test');
+	mongoose.connect(mongodbURL);
 	var db = mongoose.connection;
 	var criteria = {};
 	db.on('error', console.error.bind(console, 'connection error:'));
@@ -156,7 +156,7 @@ app.get('/address/:attrib/:attrib_value', function(req,res) {
 //new test get method 3 for get grade records
 app.get('/grades/:attrib/:attrib_value', function(req,res) {
 	var restaurantSchema = require('./models/restaurant');
-	mongoose.connect('mongodb://localhost/test');
+	mongoose.connect(mongodbURL);
 	var db = mongoose.connection;
 	var criteria = {};
 	db.on('error', console.error.bind(console, 'connection error:'));
@@ -183,7 +183,7 @@ app.get('/grades/:attrib/:attrib_value', function(req,res) {
 // to update any
 app.put('/:id/:attrib/:attrib_value',function(req,res) {
 	var restaurantSchema = require('./models/restaurant');
-	mongoose.connect('mongodb://localhost/test');
+	mongoose.connect(mongodbURL);
 	var criteria = {};
 	var db = mongoose.connection;
 	db.on('error', console.error.bind(console, 'connection error:'));
@@ -209,7 +209,7 @@ app.put('/:id/:attrib/:attrib_value',function(req,res) {
 // to update any testing
 app.put('/:searchkey/:searchkey_value/:attrib/:attrib_value',function(req,res) {
 	var restaurantSchema = require('./models/restaurant');
-	mongoose.connect('mongodb://localhost/test');
+	mongoose.connect(mongodbURL);
 	var criteria = {};
 	var searchcri={};
 	var db = mongoose.connection;
@@ -237,7 +237,7 @@ app.put('/:searchkey/:searchkey_value/:attrib/:attrib_value',function(req,res) {
 // to update address
 app.put('/address/:searchkey/:searchkey_value/:attrib/:attrib_value',function(req,res) {
 	var restaurantSchema = require('./models/restaurant');
-	mongoose.connect('mongodb://localhost/test');
+	mongoose.connect(mongodbURL);
 	var criteria = {};
 	var searchcri={};
 	var db = mongoose.connection;
@@ -263,7 +263,7 @@ app.put('/address/:searchkey/:searchkey_value/:attrib/:attrib_value',function(re
 // to update grade
 app.put('/grades/:id/:target/:target_value/:attrib/:attrib_value',function(req,res) {
 	var restaurantSchema = require('./models/restaurant');
-	mongoose.connect('mongodb://localhost/test');
+	mongoose.connect(mongodbURL);
 	var criteria = {};
 	var find = {};
 	var querystring1={};
