@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 var mongodbURL = 'mongodb://rebeccalcchan.cloudapp.net:27017/test';
 var mongoose = require('mongoose');
 
-app.post('/testing',function(req,res) {
+app.post('/',function(req,res) {
 	//console.log(req.body);
 	var restaurantSchema = require('./models/restaurant');
 	mongoose.connect(mongodbURL);
@@ -46,9 +46,12 @@ app.post('/testing',function(req,res) {
 				res.status(500).json(err);
 				throw err
 			}
+		else{
+			res.status(200).json({message: 'insert done', id: r._id});
+		}
        		//console.log('Restaurant created!')
        		db.close();
-			res.status(200).json({message: 'insert done', id: r._id});
+		
     	});
     });
 });
@@ -68,9 +71,13 @@ app.delete('/:attrib/:attrib_value',function(req,res) {
 				res.status(500).json(err);
 				throw err
    			}
+			else
+			{
+				res.status(200).json({message: 'delete done', id: req.params.id});
+			}
          		//console.log('Restaurant removed!')
         		db.close();
-   			res.status(200).json({message: 'delete done', id: req.params.id});
+   			
 		});
 	});
 });
@@ -87,13 +94,15 @@ app.get('/restaurant_id/:id', function(req,res) {
 				res.status(500).json(err);
 				throw err
 			}
+		else{
 			if (results.length > 0) {
 				res.status(200).json(results);
 			}
 			else {
 				res.status(200).json({message: 'No matching document'});
 			}
-			db.close();
+		}
+		db.close();
     	});
     });
 });
@@ -142,13 +151,15 @@ app.get('/address/:attrib/:attrib_value', function(req,res) {
 				res.status(500).json(err);
 				throw err
 			}
+		else{
 			if (results.length > 0) {
 				res.status(200).json(results);
 			}
 			else {
 				res.status(200).json({message: 'No matching document'});
 			}
-			db.close();
+		}
+		db.close();
     	});
     });
 });
@@ -169,13 +180,15 @@ app.get('/grades/:attrib/:attrib_value', function(req,res) {
 				res.status(500).json(err);
 				throw err
 			}
+		else{
 			if (results.length > 0) {
 				res.status(200).json(results);
 			}
 			else {
 				res.status(200).json({message: 'No matching document'});
 			}
-			db.close();
+		}
+		db.close();
     	});
     });
 });
@@ -195,12 +208,15 @@ app.put('/:id/:attrib/:attrib_value',function(req,res) {
 		Restaurant.update( {restaurant_id: req.params.id},criteria , function(err,results) {
        		if (err) {
 				res.status(500).json(err);
+				console.log('Error Occur!');
 				throw err
 			}
+		else{
        			console.log('Restaurant UPdates!');
        			res.status(200).json({message: 'update done', id: req.params.id});
+		}
 			//res.status(200).json({message: 'Update done', id: req.params.id});
-			db.close();
+		db.close();
     	});
     });
 }); 
@@ -225,10 +241,12 @@ app.put('/:searchkey/:searchkey_value/:attrib/:attrib_value',function(req,res) {
 				res.status(500).json(err);
 				throw err
 			}
+		else{
        			console.log('Restaurant UPdates!');
        			res.status(200).json({message: 'update done', id: req.params.id});
+		}
 			//res.status(200).json({message: 'Update done', id: req.params.id});
-			db.close();
+		db.close();
     	});
     });
 }); 
@@ -252,10 +270,12 @@ app.put('/address/:searchkey/:searchkey_value/:attrib/:attrib_value',function(re
 				res.status(500).json(err);
 				throw err
 			}
+		else{
        			console.log('Restaurant UPdates!');
        			res.status(200).json({message: 'update done', id: req.params.id});
+		}
 			//res.status(200).json({message: 'Update done', id: req.params.id});
-			db.close();
+		db.close();
     	});
     });
 }); 
@@ -289,8 +309,10 @@ app.put('/grades/:id/:target/:target_value/:attrib/:attrib_value',function(req,r
 				res.status(500).json(err);
 				throw err
 			}
-		console.log('Restaurant UPdates!');
-		res.status(200).json({message: 'update done', id: req.params.id});
+			else{
+				console.log('Restaurant UPdates!');
+				res.status(200).json({message: 'update done', id: req.params.id});
+			}
 		//res.status(200).json({message: 'Update done', id: req.params.id});
 		db.close();
 		});
