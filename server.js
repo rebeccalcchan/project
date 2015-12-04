@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-var mongodbURL = 'mongodb://rebeccalcchan.cloudapp.net:27017/test';
+var mongodbURL = 'mongodb://localhost:27017/test';
 var mongoose = require('mongoose');
 
 app.post('/',function(req,res) {
@@ -72,7 +72,7 @@ app.delete('/:attrib/:attrib_value',function(req,res) {
 				throw err
    			}
 			else
-			{
+			{	
 				res.status(200).json({message: 'delete done', id: req.params.id});
 			}
          		//console.log('Restaurant removed!')
@@ -200,25 +200,58 @@ app.put('/:id/:attrib/:attrib_value',function(req,res) {
 	var criteria = {};
 	var db = mongoose.connection;
 	db.on('error', console.error.bind(console, 'connection error:'));
-	db.once('open', function (callback) {
-		var Restaurant = mongoose.model('Restaurant', restaurantSchema);
+	if(req.params.id=='restaurant_id'&&req.params.attrib_value=='grade')
+	{
+		db.once('open', function (callback) 
+		{	
+			var Restaurant = mongoose.model('Restaurant', restaurantSchema);
+			if(req.body.date != null||req.body.grade!=null||req.body.score!=null)
+			{
+				var jsonstring = {"date":req.body.date,"grade":req.body.grade,"score":req.body.score};
+			//rObj.grades.push(jsonstring);
+			}
+			criteria['restaurant_id'] = req.params.attrib;
+			console.log(JSON.stringify(criteria));
+		
+			var queryString2 = {$push:{grades:jsonstring}};
+			console.log(JSON.stringify(queryString2));
+			//console.log(r);
+			Restaurant.update( criteria,queryString2 , function(err,results) 
+			{
+       				if (err) {
+					res.status(500).json(err);
+					throw err
+				}
+				else{
+       					console.log('Restaurant UPdates!4');
+       					res.status(200).json({message: 'update done', id: req.params.id});
+				}
+			db.close();
+    			});
+		});
+	}
+	else{
+		db.once('open', function (callback) {
+			var Restaurant = mongoose.model('Restaurant', restaurantSchema);
 
-		criteria[req.params.attrib] = req.params.attrib_value;   //.replace("+", " ");
+			criteria[req.params.attrib] = req.params.attrib_value;   //.replace("+", " ");
 		//Restaurant.find({restaurant_id: req.params.id}).update({$set:criteria}, function(err) {
-		Restaurant.update( {restaurant_id: req.params.id},criteria , function(err,results) {
-       		if (err) {
+			Restaurant.update( {restaurant_id: req.params.id},criteria , function(err,results) {
+       			if (err) {
 				res.status(500).json(err);
 				console.log('Error Occur!');
 				throw err
+				}
+			else{
+       				console.log('Restaurant UPdates!first');
+       				res.status(200).json({message: 'update done', id: req.params.id});
 			}
-		else{
-       			console.log('Restaurant UPdates!');
-       			res.status(200).json({message: 'update done', id: req.params.id});
-		}
 			//res.status(200).json({message: 'Update done', id: req.params.id});
-		db.close();
+			db.close();
+    		});
+	
     	});
-    });
+	}
 }); 
 
 
@@ -242,7 +275,7 @@ app.put('/:searchkey/:searchkey_value/:attrib/:attrib_value',function(req,res) {
 				throw err
 			}
 		else{
-       			console.log('Restaurant UPdates!');
+       			console.log('Restaurant UPdates!1');
        			res.status(200).json({message: 'update done', id: req.params.id});
 		}
 			//res.status(200).json({message: 'Update done', id: req.params.id});
@@ -271,7 +304,7 @@ app.put('/address/:searchkey/:searchkey_value/:attrib/:attrib_value',function(re
 				throw err
 			}
 		else{
-       			console.log('Restaurant UPdates!');
+       			console.log('Restaurant UPdates!2');
        			res.status(200).json({message: 'update done', id: req.params.id});
 		}
 			//res.status(200).json({message: 'Update done', id: req.params.id});
@@ -310,7 +343,7 @@ app.put('/grades/:id/:target/:target_value/:attrib/:attrib_value',function(req,r
 				throw err
 			}
 			else{
-				console.log('Restaurant UPdates!');
+				console.log('Restaurant UPdates!3');
 				res.status(200).json({message: 'update done', id: req.params.id});
 			}
 		//res.status(200).json({message: 'Update done', id: req.params.id});
@@ -318,8 +351,40 @@ app.put('/grades/:id/:target/:target_value/:attrib/:attrib_value',function(req,r
 		});
 	});
 });
-
-
+/* copied to the first PUT path
+// to push a new grade record
+app.put('/restaurant_id/:id/grade/',function(req,res) {
+	var restaurantSchema = require('./models/restaurant');
+	mongoose.connect(mongodbURL);
+	var criteria = {};
+	var db = mongoose.connection;
+	db.on('error', console.error.bind(console, 'connection error:'));
+	db.once('open', function (callback) {
+		//if(req.body.date != null||req.body.grade!=null||req.body.score!=null)
+		//{
+			var jsonstring = {"date":req.body.date,"grade":req.body.grade,"score":req.body.score};
+			//rObj.grades.push(jsonstring);
+		//}
+		criteria['restaurant_id'] = req.params.id;
+		console.log(JSON.stringify(criteria));
+		
+		var queryString2 = {$push:{grades:jsonstring}};
+		console.log(JSON.stringify(queryString2));
+		//console.log(r);
+		Restaurant.update( criteria,queryString2 , function(err,results) {
+       		if (err) {
+				res.status(500).json(err);
+				throw err
+			}
+		else{
+       			console.log('Restaurant UPdates!4');
+       			res.status(200).json({message: 'update done', id: req.params.id});
+		}
+		db.close();
+    	});
+    });
+}); 
+*/
 app.get('/', function(req,res) {
 	res.write("Hello!");
 	console.log('Get something!');
