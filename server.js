@@ -341,19 +341,22 @@ app.put('/grades/:id/:target/:target_value/:attrib/:attrib_value',function(req,r
 		queryString2 = {$set:criteria};
 
 		console.log("find:"+JSON.stringify(queryString1)+JSON.stringify(queryString2));
-		Restaurant.update(queryString1,queryString2, function(err,results) {
+		//Restaurant.update(queryString1,queryString2, function(err,results) {
+		Restaurant.update(queryString1,queryString2, function(err) {
 			if (err) {
 				res.status(500).json(err);
 				console.log('Updates Fails!');
 				throw err
 			}
 			else{
+				
 				console.log('Restaurant Updates!');
 				res.status(200).json({message: 'update done', id: req.params.id});
 			}
 		//res.status(200).json({message: 'Update done', id: req.params.id});
-		db.close();
+		
 		});
+	db.close();
 	});
 });
 
