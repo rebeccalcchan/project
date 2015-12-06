@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-var mongodbURL = 'mongodb://rebeccalcchan.cloudapp.net:27017/test';
+var mongodbURL = 'mongodb://localhost:27017/test';
 var mongoose = require('mongoose');
 
 app.post('/',function(req,res) {
@@ -220,11 +220,16 @@ app.put('/:searchkey/:searchkey_value/:attrib',function(req,res) {
 			var queryString2 = {$push:{grades:jsonstring}};
 			console.log(JSON.stringify(queryString2));
 			//console.log(r);
-			if(typeof req.body.score !="Number")
+			//if(isNaN(parseInt(req.body.score))==false)
+
+				console.log(isNaN(parseInt(req.body.score)));
+				console.log(parseInt(req.body.score));
+			if(isNaN(parseInt(req.body.score)))
 			{
 
 				console.log("score is not a number!");
-				
+				res.status(200).json({message: 'score is not a number!'});
+				db.close();
 				
 			}
 			else
