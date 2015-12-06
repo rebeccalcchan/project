@@ -199,8 +199,8 @@ app.get('/grades/:attrib/:attrib_value', function(req,res) {
 app.put('/:searchkey/:searchkey_value/:attrib',function(req,res) {
 	var restaurantSchema = require('./models/restaurant');
 	mongoose.connect(mongodbURL);
-	var criteria = {};
 	var searchcri={};
+
 	var db = mongoose.connection;
 	db.on('error', console.error.bind(console, 'connection error:'));
 	if(req.params.searchkey=='restaurant_id'&&req.params.attrib=='grade')
@@ -208,18 +208,32 @@ app.put('/:searchkey/:searchkey_value/:attrib',function(req,res) {
 		db.once('open', function (callback) 
 		{	
 			var Restaurant = mongoose.model('Restaurant', restaurantSchema);
-			if(req.body.date != null||req.body.grade!=null||req.body.score!=null)
-			{
+			//if(req.body.date != null||req.body.grade!=null||req.body.score!=null)
+			//{
 				var jsonstring = {"date":req.body.date,"grade":req.body.grade,"score":req.body.score};
 			//rObj.grades.push(jsonstring);
-			}
-			criteria['restaurant_id'] = req.params.searchkey_value;
-			console.log(JSON.stringify(criteria));
+			//}
+			var keycri = {};
+			keycri['restaurant_id'] = req.params.searchkey_value;
+			console.log(JSON.stringify(keycri));
 		
 			var queryString2 = {$push:{grades:jsonstring}};
 			console.log(JSON.stringify(queryString2));
 			//console.log(r);
-			Restaurant.update( criteria,queryString2 , function(err,results) 
+			if(typeof req.body.score !="Number")
+			{
+
+				console.log("score is not a number!");
+				
+				
+			}
+			else
+			{
+
+			
+			
+	
+			Restaurant.update( keycri, queryString2, function(err,results) 
 			{
        				if (err) {
 					res.status(500).json(err);
@@ -232,6 +246,8 @@ app.put('/:searchkey/:searchkey_value/:attrib',function(req,res) {
 				}
 			db.close();
     			});
+			}
+
 		});
 	}
 	else if(req.params.attrib=='address')
@@ -241,9 +257,10 @@ app.put('/:searchkey/:searchkey_value/:attrib',function(req,res) {
 		{
 			var Restaurant = mongoose.model('Restaurant', restaurantSchema);
 			searchcri[req.params.searchkey] = req.params.searchkey_value;
-			criteria={$set:{address:req.body}};   //.replace("+", " ");
-		
-			Restaurant.update( searchcri,criteria , function(err,results) 
+			var criteria2 = {};
+			criteria2={$set:{address:req.body}};   //.replace("+", " ");
+			
+			Restaurant.update( searchcri,criteria2 , function(err,results) 
 			{
        				if (err) {
 					res.status(500).json(err);
@@ -259,6 +276,7 @@ app.put('/:searchkey/:searchkey_value/:attrib',function(req,res) {
     			});
    	 	});
 	}
+	
 }); 
 
 
