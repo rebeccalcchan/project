@@ -331,18 +331,14 @@ app.put('/grades/:id/:target/:target_value/:attrib/:attrib_value',function(req,r
 	db.once('open', function (callback) {
 		var Restaurant = mongoose.model('Restaurant', restaurantSchema);
 		
-		
 		criteria["grades.$."+req.params.attrib] = req.params.attrib_value;
-		//console.log("criteria:"+JSON.stringify(criteria));
-		//find[restaurant_id] = req.params.id; 
 		target[req.params.target] = req.params.target_value;
-		//console.log("find:"+JSON.stringify(find));
 		queryString1 = {"restaurant_id":req.params.id,"grades":{$elemMatch:target}};
 		queryString2 = {$set:criteria};
 
 		console.log("find:"+JSON.stringify(queryString1)+JSON.stringify(queryString2));
-		//Restaurant.update(queryString1,queryString2, function(err,results) {
-		Restaurant.update(queryString1,queryString2, function(err) {
+
+		Restaurant.update(queryString1,queryString2, function(err,results) {
 			if (err) {
 				res.status(500).json(err);
 				console.log('Updates Fails!');
@@ -353,7 +349,6 @@ app.put('/grades/:id/:target/:target_value/:attrib/:attrib_value',function(req,r
 				console.log('Restaurant Updates!');
 				res.status(200).json({message: 'update done', id: req.params.id});
 			}
-		//res.status(200).json({message: 'Update done', id: req.params.id});
 		
 		});
 	db.close();
