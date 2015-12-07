@@ -5,7 +5,8 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-var mongodbURL = 'mongodb://rebeccalcchan.cloudapp.net:27017/test';
+//var mongodbURL = 'mongodb://rebeccalcchan.cloudapp.net:27017/test';
+var mongodbURL = 'mongodb://localhost:27017/test';
 var mongoose = require('mongoose');
 
 app.post('/',function(req,res) {
@@ -84,6 +85,86 @@ app.delete('/:attrib/:attrib_value',function(req,res) {
    			
 		});
 	});
+});
+
+//for delete grades
+app.put('/restaurant_id/:attrib_value/grade/:skey/:skey_value',function(req,res) {
+	var restaurantSchema = require('./models/restaurant');
+	mongoose.connect(mongodbURL);
+	var db = mongoose.connection;
+	var criteria = {};
+	var skeyv={};
+	db.on('error', console.error.bind(console, 'connection error:'));
+		db.once('open', function (callback) 
+		{	
+			var Restaurant = mongoose.model('Restaurant', restaurantSchema);
+			//if(req.body.date != null||req.body.grade!=null||req.body.score!=null)
+			//{
+				var jsonstring = {};
+				jsonstring[req.params.skey] = req.params.skey_value;
+			//rObj.grades.push(jsonstring);
+			//}
+			var keycri = {};
+			keycri['restaurant_id'] = req.params.attrib_value;
+			console.log(JSON.stringify(keycri));
+		
+			var queryString2 = {$pull:{grades:jsonstring}};
+			console.log(JSON.stringify(queryString2));
+			//console.log(r);
+			//if(isNaN(parseInt(req.body.score))==false)
+			var obj = {restaurant_id: req.params.attrib_value, grades:{$elemMatch:jsonstring}};
+			if(isNaN(parseInt(req.params.skey_value))&&req.params.skey=='score')
+			{
+
+				console.log("score is not a number!");
+				res.status(200).json({message: 'score is not a number!'});
+				db.close();
+				
+			}
+			else
+			{
+			console.log(obj);
+			Restaurant.find(obj,function(err,results){
+       				if (err) {
+					res.status(500).json(err);
+					throw err
+					}
+				else{	console.log(results);
+					if (results.length > 0) 
+					{
+						
+						Restaurant.update( keycri, queryString2, function(err,results) 
+						{
+       							if (err) {
+								res.status(500).json(err);
+								console.log('Error Occur!');
+								throw err
+								}
+							else{
+					
+       								console.log('Restaurant Updates!');
+					
+       								res.status(200).json({message: 'update done', id: req.params.skey_value});
+								}
+						
+    						});
+
+
+
+					}
+					else {
+						res.status(200).json({message: 'No matching document'});
+						
+					}
+				}	
+				db.close();
+			});
+			
+	
+
+			}
+
+		});
 });
 
 
