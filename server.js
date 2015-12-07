@@ -21,8 +21,10 @@ app.post('/',function(req,res) {
 		rObj.address.street = req.body.street;
 		rObj.address.zipcode = req.body.zipcode;
 		rObj.address.coord = [];
-		rObj.address.coord.push(req.body.lon);
+		if(req.body.lon!=null&&req.body.lat!=null)
+		{rObj.address.coord.push(req.body.lon);
 		rObj.address.coord.push(req.body.lat);
+		}
 		rObj.borough = req.body.borough;
 		rObj.cuisine = req.body.cuisine;
 		rObj.name = req.body.name;
@@ -83,6 +85,7 @@ app.delete('/:attrib/:attrib_value',function(req,res) {
 		});
 	});
 });
+
 
 app.get('/restaurant_id/:id', function(req,res) {
 	var restaurantSchema = require('./models/restaurant');
@@ -351,8 +354,9 @@ app.put('/grades/:id/:target/:target_value/:attrib/:attrib_value',function(req,r
 			}
 		
 		});
-	db.close();
+	
 	});
+	db.close();
 });
 
 app.get('/', function(req,res) {
